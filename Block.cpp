@@ -10,7 +10,9 @@ Block::Block(int A, int S, string P, string B){
 	PID = P;
 	BID = B;
 }
-
+//void SetB(int A, int S){
+//	size = S;
+//	startA = A; }
 Block::Block(int A, int S){
 	size =S;
 	startA =A;

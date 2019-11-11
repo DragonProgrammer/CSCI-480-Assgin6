@@ -24,8 +24,11 @@ void Buse(int S, string P, string B, Block &H){
 		exit(0);
 	} else if (NS > 0){
 		NA = H.size + S;
-		H.size = NS;
-		H.startA = NA;
+//		Available.remove(H)
+		Block temp(NS, NA);
+		H = temp;
+//		H.size = NS;
+//		H.startA = NA;
 	} else if (NS == 0){
 		//remove H
 	}

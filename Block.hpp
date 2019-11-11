@@ -12,6 +12,7 @@ class Block{
 	Block(int A, int S);// initialize unused blocks
 Block(int A, int S, string P, string B); //construct used block
 void PBlock();
+void SetB(int A, int S);
 };
 
 #endif
