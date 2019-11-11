@@ -14,30 +14,30 @@ list<Block> Available;
 list<Block> In_use;
 
 //might not need to pass address
-void Buse(int S, string P, string B, Block &H){
-	In_use.push_back(Block(H.startA, S, P, B));
-	int NS, NA;
-	NS = H.size - S;
-	cout << H.size << "   " << NS << endl;
-	if (NS <0 ){
-		cout << "NS is less than";
-		exit(0);
-	} else if (NS > 0){
-		NA = H.size + S;
-//		Available.remove(H)
-		Block temp(NS, NA);
-		H = temp;
-//		H.size = NS;
-//		H.startA = NA;
-	} else if (NS == 0){
-		//remove H
-	}
-}
+//void Buse(int S, string P, string B, Block &H){
+//}
 void CheckA(int S, string P, string B){
 	int Check = S;
 	for(auto V : Available){
 		if(Check < V.size){ //if the block fits
-			Buse(S, P,B, V);
+	//		Buse(S, P,B, V);
+	In_use.push_back(Block(V.startA, S, P, B));
+	int NS, NA;
+	NS = V.size - S;
+	cout << V.size << "   " << NS << endl;
+	if (NS <0 ){
+		cout << "NS is less than";
+		exit(0);
+	} else if (NS > 0){
+		NA = V.size + S;
+	//	Block temp(NS, NA);
+	//	V = temp;
+	V.size = NS;
+		V.startA = NA;
+		return;
+	} else if (NS == 0){
+		//remove H
+	}
 			return;}	// exit the funciton
 	}
 	cout << "none available" << endl;
