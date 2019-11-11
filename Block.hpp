@@ -9,8 +9,8 @@ class Block{
 	int startA;
 	string PID;
 	string BID;
-	Block(int S, int A);// initialize unused blocks
-void UBlock(int S, int A, string P, string B); //construct used block
+	Block(int A, int S);// initialize unused blocks
+Block(int A, int S, string P, string B); //construct used block
 void PBlock();
 };
 

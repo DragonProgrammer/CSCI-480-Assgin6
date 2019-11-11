@@ -14,28 +14,27 @@ list<Block> Available;
 list<Block> In_use;
 
 //might not need to pass address
-void Buse(int S, int A, string P, string B, Block H){
-	In_use.push_back(UBlock(S, A, P, B));
+void Buse(int S, string P, string B, Block &H){
+	In_use.push_back(Block(H.startA, S, P, B));
 	int NS, NA;
 	NS = H.size - S;
+	cout << H.size << "   " << NS << endl;
 	if (NS <0 ){
 		cout << "NS is less than";
 		exit(0);
-	}
-	if (NS > 0){
+	} else if (NS > 0){
 		NA = H.size + S;
 		H.size = NS;
 		H.startA = NA;
-	}
-	if (NS == 0){
+	} else if (NS == 0){
 		//remove H
 	}
 }
-void CheckA(int S, int A, string P, string B){
+void CheckA(int S, string P, string B){
 	int Check = S;
 	for(auto V : Available){
 		if(Check < V.size){ //if the block fits
-			Buse(S, A, "Arat","process", V);
+			Buse(S, P,B, V);
 			return;}	// exit the funciton
 	}
 	cout << "none available" << endl;
@@ -48,23 +47,27 @@ void InitA(){
 // Start Address = 6291456 Size = 2097152
 // Start Address = 8388608 Size = 4194304
 // Start Address = 12582912 Size = 4194304
-Available.push_back(Block(314,40));
+Available.push_back(Block((3*Mb),(1*Mb)));
 Available.push_back(Block((4*Mb),(2*Mb)));
-//Available[2] = Block((6*Mb),(2*Mb));
-//Available[3] = Block((8*MB),(4*MB));
+Available.push_back(Block((6*Mb),(2*Mb)));
+Available.push_back(Block((8*Mb),(4*Mb)));
 Available.push_back(Block((12*Mb),(4*Mb)));
 }
 void PrintL(){
 //	int s =Available.size();
+	cout << "Available Blocks:" << endl;
 	for (auto e : Available){
 	e.PBlock();
 	}
+	cout << "Used Blocks: " << endl;
 	for (auto e : In_use){
 	e.PBlock();
 	}
 }
 int main(){
 	InitA();
+	PrintL();
+	CheckA((.5*Mb),"Art", "Process");
 	PrintL();
 	return 0;
 }

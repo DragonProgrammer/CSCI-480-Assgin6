@@ -4,14 +4,14 @@
 using std::cout;
 using std::string;
 using std::endl;
-void Block::UBlock(int S, int A, string P, string B){
+Block::Block(int A, int S, string P, string B){
 	size = S; 
 	startA =A;
 	PID = P;
-	Bid = B;
+	BID = B;
 }
 
-Block::Block(int S, int A){
+Block::Block(int A, int S){
 	size =S;
 	startA =A;
 }
