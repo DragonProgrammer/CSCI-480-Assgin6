@@ -16,8 +16,25 @@ list<Block> Available;
 list<Block> In_use;
 
 // might not need to pass address
-// void Buse(int S, string P, string B, Block &H){
-//}
+void Buse(int S, string P, string B, Block &V, auto Spot){
+      In_use.push_back(Block(V.startA, S, P, B));
+      int NS, NA;
+      NS = V.size - S;    //  cout << V.size << "   " << NS << endl;
+      if (NS < 0) {
+        cout << "NS is less than";
+        exit(0);
+      } else if (NS > 0) {
+        NA = V.startA + S;   //	cout << V.startA << "   " << NA << endl;
+        V.size = NS;
+        V.startA = NA;
+            	return;
+      } else if (NS == 0) {
+       Available.erase(Spot); // remove H
+       return;
+      }
+}
+
+
 void Terminate(string P){
 	cout << "Termainate all processes with PID: " << P <<endl;
 	for (auto &T : In_use){
@@ -64,26 +81,9 @@ void CheckA(int S, string P, string B) {
   auto Spot =Available.begin();
   for (auto &V : Available) { // iterating ththro the list and using a referance instead of copying the item
     if (Check <= V.size) { // if the block fits
-      //		Buse(S, P,B, V);
-      In_use.push_back(Block(V.startA, S, P, B));
-      int NS, NA;
-      NS = V.size - S;
-    //  cout << V.size << "   " << NS << endl;
-      if (NS < 0) {
-        cout << "NS is less than";
-        exit(0);
-      } else if (NS > 0) {
-        NA = V.startA + S;
-       //	cout << V.startA << "   " << NA << endl;
-        V.size = NS;
-        V.startA = NA;
-       
-       	return;
-      } else if (NS == 0) {
-       Available.erase(Spot); // remove H
-       return;
-      }
-    } // exit the funciton
+      		Buse(S, P,B, V, Spot);
+   return;
+    }
     Spot++;
   }
   cout << "none available" << endl;
