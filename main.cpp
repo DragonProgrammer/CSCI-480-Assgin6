@@ -2,6 +2,8 @@
 #include <iostream>
 #include <list>
 #include <string>
+#include <iterator>
+#include <algorithm>
 using std::cout;
 using std::endl;
 using std::list;
@@ -16,6 +18,19 @@ list<Block> In_use;
 // might not need to pass address
 // void Buse(int S, string P, string B, Block &H){
 //}
+void Terminate(string P){
+	cout << "Termainate all processes with PID: " << P <<endl;
+	for (auto &T : In_use){
+		if ( P == T.PID){
+			Available.push_back(Block(T.startA, T.size));
+								}
+	}
+		Available.sort();
+		cout << In_use.size() <<endl;
+	//	In_use.remove(P); // this line will brobably be the error
+	In_use.remove_if([&P](Block B){return B.PID == P;});
+		cout << In_use.size() <<endl;
+}
 void DAlocate(string P, string B){
 	cout << "Dealocate process with PID of: " << P <<endl;
 	auto Spot=In_use.begin();
@@ -24,11 +39,25 @@ void DAlocate(string P, string B){
 			Available.push_back(Block(D.startA, D.size));
 			In_use.erase(Spot);
 			Available.sort();
+			return;
 		}
 		Spot++;
 	}	
 }
-
+void Merge(){
+	for(auto i=Available.begin(), j=std::next(i,1);
+			j != Available.end();
+			i++,j++){ // looping with a pointer to the next element
+		int test =i->size+i->startA, newS=i->size+j->size;
+//		cout << test << "   " << j->startA <<endl;
+		if (test == j->startA && newS <= (4*Mb)){
+			cout << "Merge " << i->startA << "amd " << j->startA <<endl;
+			i->size = newS;
+			Available.erase(j);
+			j=std::next(i,1);
+		}
+	}
+}
 
 void CheckA(int S, string P, string B) {
   int Check = S;
@@ -81,19 +110,26 @@ void PrintL() {
   }
   cout << "Used Blocks: " << endl;
   for (auto e : In_use) {
-    e.PBlock();
+    e.PBlockU();
   }
 }
 int main() {
   InitA();
-  PrintL();
+  //PrintL();
   CheckA((.5 * Mb), "Art", "Process");
-  PrintL();
+//  PrintL();
   CheckA(Mb, "Art2", "Process");
-  PrintL();
+//  PrintL();
   CheckA((2 * Mb), "Art3", "Process");
-  PrintL();
+  //PrintL();
   DAlocate("Art2", "Process");
-  PrintL();
+ // PrintL();
+  CheckA((2 * Mb), "Art3", "Process");
+  CheckA((1 * Mb), "Art4", "Process");
+  CheckA((2 * Mb), "Art3", "Process");
+PrintL();
+Terminate("Art3");
+//Merge();
+PrintL();
   return 0;
 }

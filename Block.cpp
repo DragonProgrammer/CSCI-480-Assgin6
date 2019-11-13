@@ -21,5 +21,5 @@ void Block::PBlock(){
 	cout << "Block Address: " << startA << "  Block Size: " << size << endl;
 }
 void Block::PBlockU(){
-	cout << "Block Address: " << startA << "  Block Size: " << size << "   Process ID: " << PID << "   Process name: " << BID << endl;
+	cout << "Block Address: " << startA << "  Block Size: " << size << " Process ID: " << PID << " Process name: " << BID << endl;
 }
