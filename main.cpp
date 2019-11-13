@@ -1,13 +1,17 @@
 #include "Block.hpp"
 #include <iostream>
 #include <list>
+#include <fstream>
 #include <string>
+#include <string.h> // to compare argv
 #include <iterator>
 #include <algorithm>
 using std::cout;
+using std::ifstream;
 using std::endl;
 using std::list;
 using std::string;
+using std::cerr;
 // using std::vector;
 #define Kb 1024
 #define Mb (1024 * 1024)
@@ -16,17 +20,17 @@ list<Block> Available;
 list<Block> In_use;
 
 // might not need to pass address
-void Buse(int S, string P, string B, Block &V, auto Spot){
-      In_use.push_back(Block(V.startA, S, P, B));
+void Buse(int S, string P, string B, auto Spot){
+      In_use.push_back(Block(Spot->startA, S, P, B));
       int NS, NA;
-      NS = V.size - S;    //  cout << V.size << "   " << NS << endl;
+      NS = Spot->size - S;    //  cout << V.size << "   " << NS << endl;
       if (NS < 0) {
         cout << "NS is less than";
         exit(0);
       } else if (NS > 0) {
-        NA = V.startA + S;   //	cout << V.startA << "   " << NA << endl;
-        V.size = NS;
-        V.startA = NA;
+        NA = Spot->startA + S;   //	cout << V.startA << "   " << NA << endl;
+        Spot->size = NS;
+        Spot->startA = NA;
             	return;
       } else if (NS == 0) {
        Available.erase(Spot); // remove H
@@ -34,6 +38,27 @@ void Buse(int S, string P, string B, Block &V, auto Spot){
       }
 }
 
+void CheckB(int S, string P, string B) {
+  int Check = S;
+  auto Spot =Available.begin();
+  auto tempL = Spot;
+ bool Found = false; 
+  
+  for (auto &V : Available) { // iterating ththro the list and using a referance instead of copying the item
+    if (Check == V.size) { // if the block fits
+    	    Buse(S, P,B, Spot);
+   return;
+    } else if (Check < V.size && (tempL->size < V.size || !Found)){
+	    tempL = Spot;
+	    Found = true;
+    }
+    Spot++;
+  }
+  if (Found){
+	  Buse(S, P, B, tempL);
+	  return;}
+  cout << "none available" << endl;
+}
 
 void Terminate(string P){
 	cout << "Termainate all processes with PID: " << P <<endl;
@@ -81,7 +106,7 @@ void CheckA(int S, string P, string B) {
   auto Spot =Available.begin();
   for (auto &V : Available) { // iterating ththro the list and using a referance instead of copying the item
     if (Check <= V.size) { // if the block fits
-      		Buse(S, P,B, V, Spot);
+      		Buse(S, P,B, Spot);
    return;
     }
     Spot++;
@@ -113,23 +138,51 @@ void PrintL() {
     e.PBlockU();
   }
 }
-int main() {
-  InitA();
-  //PrintL();
-  CheckA((.5 * Mb), "Art", "Process");
-//  PrintL();
-  CheckA(Mb, "Art2", "Process");
-//  PrintL();
-  CheckA((2 * Mb), "Art3", "Process");
-  //PrintL();
-  DAlocate("Art2", "Process");
- // PrintL();
-  CheckA((2 * Mb), "Art3", "Process");
-  CheckA((1 * Mb), "Art4", "Process");
-  CheckA((2 * Mb), "Art3", "Process");
+
+
+
+int main(int argc,char**argv) {
+	if(argc!=2){
+		cerr<<"Needs 1 rg"<<endl;
+		return 1;}
+
+ifstream Infile;
+Infile.open("testdata");
+char Case;
+int Size;
+string PID, BID;
+// read in the first leter of the line
+InitA();
 PrintL();
-Terminate("Art3");
-//Merge();
+while(Infile>>Case)
+		switch (Case) {
+			case 'A':
+			case 'L':
+		Infile >>  PID >>  Size >>  BID;
+//check command line arge
+ if (0==strcmp(argv[1], "F")){
+  CheckA(Size, PID, BID);}
+  else {
+ CheckB(Size, PID, BID);
+}
 PrintL();
-  return 0;
+
+break;
+		case 'D':
+//read in PID, BID
+Infile >> PID >> BID;
+DAlocate(PID, BID);
+Merge();
+PrintL();
+break;
+		case 'T':
+Infile >> PID;
+Terminate(PID);
+Merge();
+PrintL();
+break;
+		case '?':
+cout << "EnD" << endl;
+return 0;
+	}
 }
