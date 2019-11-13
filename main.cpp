@@ -19,6 +19,21 @@ using std::cerr;
 list<Block> Available;
 list<Block> In_use;
 
+int Usize(){
+int	total = 0;
+	for (auto A :In_use){
+		total += A.size;
+	}
+	return total;
+}
+int Asize(){
+int	total = 0;
+	for (auto A :Available){
+		total += A.size;
+	}
+	return total;
+}
+
 // might not need to pass address
 void Buse(int S, string P, string B, auto Spot){
       In_use.push_front(Block(Spot->startA, S, P, B));
@@ -46,46 +61,23 @@ void CheckB(int S, string P, string B) {
   
   for (auto &V : Available) { // iterating ththro the list and using a referance instead of copying the item
     if (Check == V.size) { // if the block fits
-    	    Buse(S, P,B, Spot);
+    	   cout << "exact size" << endl;
+	   
+	    Buse(S, P,B, Spot);
    return;
-    } else if (Check < V.size && (tempL->size < V.size || !Found)){
+    } else if (Check < V.size && (tempL->size > V.size || !Found)){
 	    tempL = Spot;
 	    Found = true;
     }
     Spot++;
   }
   if (Found){
+	  cout << "Found a block of size " << tempL->size << endl;
 	  Buse(S, P, B, tempL);
 	  return;}
   cout << "none available" << endl;
 }
 
-void Terminate(string P){
-	cout << "Termainate all processes with PID: " << P <<endl;
-	for (auto &T : In_use){
-		if ( P == T.PID){
-			Available.push_back(Block(T.startA, T.size));
-								}
-	}
-		Available.sort();
-		cout << In_use.size() <<endl;
-	//	In_use.remove(P); // this line will brobably be the error
-	In_use.remove_if([&P](Block B){return B.PID == P;});
-		cout << In_use.size() <<endl;
-}
-void DAlocate(string P, string B){
-	cout << "Dealocate process with PID of: " << P <<endl;
-	auto Spot=In_use.begin();
-	for (auto &D : In_use){
-		if (P == D.PID && B == D.BID){
-			Available.push_back(Block(D.startA, D.size));
-			In_use.erase(Spot);
-			Available.sort();
-			return;
-		}
-		Spot++;
-	}	
-}
 void Merge(){
 	for(auto i=Available.begin(), j=std::next(i,1);
 			j != Available.end();
@@ -101,6 +93,34 @@ void Merge(){
 		}
 	}
 }
+void Terminate(string P){
+	cout << "Transaction:   request to termainate process " << P <<endl;
+	for (auto &T : In_use){
+		if ( P == T.PID){
+			Available.push_back(Block(T.startA, T.size));
+			Available.sort();
+			Merge();
+								}
+	}
+		Available.sort();
+//		cout << In_use.size() <<endl;
+	//	In_use.remove(P); // this line will brobably be the error
+	In_use.remove_if([&P](Block B){return B.PID == P;});
+//		cout << In_use.size() <<endl;
+}
+void DAlocate(string P, string B){
+	cout << "Transaction: request to dealocate block ID " << B << " for process " << P <<endl;
+	auto Spot=In_use.begin();
+	for (auto &D : In_use){
+		if (P == D.PID && B == D.BID){
+			Available.push_back(Block(D.startA, D.size));
+			In_use.erase(Spot);
+			Available.sort();
+			return;
+		}
+		Spot++;
+	}	
+}
 
 void CheckA(int S, string P, string B) {
 	int Check = S;
@@ -109,7 +129,7 @@ void CheckA(int S, string P, string B) {
     if (Check <= V.size) { // if the block fits
     cout << "Found a block of size " << V.size << endl; //copy this line 	
     	    Buse(S, P,B, Spot);
-    cout << "Success in allocating a block" << endl; // copy this line
+    cout << "Success in allocating a block" << endl << endl; // copy this line
    return;
     }
     Spot++;
@@ -136,10 +156,15 @@ void PrintL() {
   for (auto e : Available) {
     e.PBlock();
   }
+  cout << "total list size " << Asize() <<endl;
   cout << "Used Blocks: " << endl;
+  if (In_use.size() == 0)
+	  cout << "(none)" <<endl;
   for (auto e : In_use) {
     e.PBlockU();
   }
+  cout << "total list size " << Usize() <<endl;
+  cout << endl;
 }
 
 
@@ -167,7 +192,7 @@ while(Infile>>Case)
 		switch (Case) {
 			case 'A':
 		Infile >>  PID >>  Size >>  BID;
-cout << "request to allocate " << Size << " for process " << PID << ", block ID " << BID << endl;
+cout << "Transaction: request to allocate " << Size << " bytes for process " << PID << ", block ID " << BID << endl;
  if (0==strcmp(argv[1], "-F")){
 	 CheckA(Size, PID, BID);}
   else {
@@ -179,7 +204,7 @@ break;
 			case 'L':
 		Infile >>  PID >>  Size >>  BID;
 //check command line arge
-cout << "request to load process " << PID << ", block ID " << BID << " using " << Size << " bytes" << endl;
+cout << "Transaction: request to load process " << PID << ", block ID " << BID << " using " << Size << " bytes" << endl;
  if (0==strcmp(argv[1], "-F")){
 	 CheckA(Size, PID, BID);}
   else {
@@ -198,7 +223,7 @@ break;
 		case 'T':
 Infile >> PID;
 Terminate(PID);
-Merge();
+//Merge();
 PrintL();
 break;
 		case '?':
