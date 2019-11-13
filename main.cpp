@@ -21,7 +21,7 @@ list<Block> In_use;
 
 // might not need to pass address
 void Buse(int S, string P, string B, auto Spot){
-      In_use.push_back(Block(Spot->startA, S, P, B));
+      In_use.push_front(Block(Spot->startA, S, P, B));
       int NS, NA;
       NS = Spot->size - S;    //  cout << V.size << "   " << NS << endl;
       if (NS < 0) {
@@ -96,17 +96,20 @@ void Merge(){
 			cout << "Merge " << i->startA << "amd " << j->startA <<endl;
 			i->size = newS;
 			Available.erase(j);
-			j=std::next(i,1);
+		//	j=std::next(i,1);    old merge
+		return Merge();
 		}
 	}
 }
 
 void CheckA(int S, string P, string B) {
-  int Check = S;
+	int Check = S;
   auto Spot =Available.begin();
   for (auto &V : Available) { // iterating ththro the list and using a referance instead of copying the item
     if (Check <= V.size) { // if the block fits
-      		Buse(S, P,B, Spot);
+    cout << "Found a block of size " << V.size << endl; //copy this line 	
+    	    Buse(S, P,B, Spot);
+    cout << "Success in allocating a block" << endl; // copy this line
    return;
     }
     Spot++;
@@ -152,16 +155,33 @@ char Case;
 int Size;
 string PID, BID;
 // read in the first leter of the line
+ if (0==strcmp(argv[1], "-F")){
+  cout << "Simulation of Memory Managment using the First-Fit algorithm" << endl << endl << "Begining the run" << endl << endl;}
+  else {
+  cout << "Simulation of Memory Managment using the Best-Fit algorithm" << endl << endl << "Begining the run" << endl << endl;
+}
 InitA();
 PrintL();
 while(Infile>>Case)
+//	cout << "Transaction: ";
 		switch (Case) {
 			case 'A':
+		Infile >>  PID >>  Size >>  BID;
+cout << "request to allocate " << Size << " for process " << PID << ", block ID " << BID << endl;
+ if (0==strcmp(argv[1], "-F")){
+	 CheckA(Size, PID, BID);}
+  else {
+ CheckB(Size, PID, BID);
+}
+PrintL();
+
+break;
 			case 'L':
 		Infile >>  PID >>  Size >>  BID;
 //check command line arge
- if (0==strcmp(argv[1], "F")){
-  CheckA(Size, PID, BID);}
+cout << "request to load process " << PID << ", block ID " << BID << " using " << Size << " bytes" << endl;
+ if (0==strcmp(argv[1], "-F")){
+	 CheckA(Size, PID, BID);}
   else {
  CheckB(Size, PID, BID);
 }
