@@ -61,7 +61,7 @@ void CheckB(int S, string P, string B) {
   
   for (auto &V : Available) { // iterating ththro the list and using a referance instead of copying the item
     if (Check == V.size) { // if the block fits
-    	   cout << "exact size" << endl;
+    	  // cout << "exact size" << endl;
 	   
 	    Buse(S, P,B, Spot);
    return;
@@ -74,8 +74,9 @@ void CheckB(int S, string P, string B) {
   if (Found){
 	  cout << "Found a block of size " << tempL->size << endl;
 	  Buse(S, P, B, tempL);
+    cout << "Success in allocating a block" << endl << endl; // copy this line
 	  return;}
-  cout << "none available" << endl;
+  cout << "Unable to comply as no block of adaquate size is available" << endl <<endl;
 }
 
 void Merge(){
@@ -85,7 +86,7 @@ void Merge(){
 		int test =i->size+i->startA, newS=i->size+j->size;
 //		cout << test << "   " << j->startA <<endl;
 		if (test == j->startA && newS <= (4*Mb)){
-			cout << "Merge " << i->startA << "amd " << j->startA <<endl;
+			cout << "Merging two blocks at " << i->startA << " and " << j->startA <<endl;
 			i->size = newS;
 			Available.erase(j);
 		//	j=std::next(i,1);    old merge
@@ -95,8 +96,10 @@ void Merge(){
 }
 void Terminate(string P){
 	cout << "Transaction:   request to termainate process " << P <<endl;
+bool found = false;
 	for (auto &T : In_use){
 		if ( P == T.PID){
+		found = true;
 			Available.push_back(Block(T.startA, T.size));
 			Available.sort();
 			Merge();
@@ -105,7 +108,9 @@ void Terminate(string P){
 		Available.sort();
 //		cout << In_use.size() <<endl;
 	//	In_use.remove(P); // this line will brobably be the error
-	In_use.remove_if([&P](Block B){return B.PID == P;});
+if(found){	In_use.remove_if([&P](Block B){return B.PID == P;});
+cout << "Success in terminating a process" << endl << endl;}
+else { cout << "Unable to comply as the indicated process could not be found" <<endl <<endl;}
 //		cout << In_use.size() <<endl;
 }
 void DAlocate(string P, string B){
@@ -116,10 +121,13 @@ void DAlocate(string P, string B){
 			Available.push_back(Block(D.startA, D.size));
 			In_use.erase(Spot);
 			Available.sort();
+			Merge();
+			cout << "Success in dealocating a block" <<endl <<endl;
 			return;
 		}
 		Spot++;
 	}	
+cout << "Unable to comply as the indicated block cannot be found." << endl <<endl;
 }
 
 void CheckA(int S, string P, string B) {
@@ -134,7 +142,7 @@ void CheckA(int S, string P, string B) {
     }
     Spot++;
   }
-  cout << "none available" << endl;
+  cout << "Unable to comply as no block of adaquate size is available" << endl << endl;
 }
 void InitA() {
 
@@ -152,18 +160,18 @@ void InitA() {
 }
 void PrintL() {
   //	int s =Available.size();
-  cout << "Available Blocks:" << endl;
+  cout << "List of available blocks" << endl;
   for (auto e : Available) {
     e.PBlock();
   }
-  cout << "total list size " << Asize() <<endl;
-  cout << "Used Blocks: " << endl;
+  cout << "Total size of the list = " << Asize() <<endl << endl;;
+  cout << "List of blocks in use " << endl;
   if (In_use.size() == 0)
 	  cout << "(none)" <<endl;
   for (auto e : In_use) {
     e.PBlockU();
   }
-  cout << "total list size " << Usize() <<endl;
+  cout << "Total size of the list = " << Usize() <<endl;
   cout << endl;
 }
 
@@ -227,7 +235,8 @@ Terminate(PID);
 PrintL();
 break;
 		case '?':
-cout << "EnD" << endl;
+cout << "End of the run" << endl << endl;
+PrintL();
 return 0;
 	}
 }

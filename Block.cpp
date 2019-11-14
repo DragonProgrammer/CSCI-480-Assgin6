@@ -1,6 +1,8 @@
 #include <iostream>
 #include <string>
+#include <iomanip>
 #include "Block.hpp"
+using std::setw;
 using std::cout;
 using std::string;
 using std::endl;
@@ -18,8 +20,8 @@ Block::Block(int A, int S){
 	startA =A;
 }
 void Block::PBlock(){
-	cout << "Block Address: " << startA << "  Block Size: " << size << endl;
+	cout << "Start Address = " << setw(8) << startA << " Size = " << setw(8) <<size << endl;
 }
 void Block::PBlockU(){
-	cout << "Block Address: " << startA << "  Block Size: " << size << " Process ID: " << PID << " Process name: " << BID << endl;
+	cout << "Start Address: " << setw(8) << startA << " Size = " << size << " Process ID =  " << PID << " Block ID = " << BID << endl;
 }
