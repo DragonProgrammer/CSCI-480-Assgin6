@@ -1,3 +1,8 @@
+// Author micheal peterson
+// assignment 6
+// class 480-2
+// Due 11/13
+
 #include <iostream>
 #include <string>
 #include <iomanip>
@@ -6,22 +11,19 @@ using std::setw;
 using std::cout;
 using std::string;
 using std::endl;
-Block::Block(int A, int S, string P, string B){
+Block::Block(int A, int S, string P, string B){ //constructor of In_use
 	size = S; 
 	startA =A;
 	PID = P;
 	BID = B;
 }
-//void SetB(int A, int S){
-//	size = S;
-//	startA = A; }
-Block::Block(int A, int S){
+Block::Block(int A, int S){  //constructer for Available
 	size =S;
 	startA =A;
 }
-void Block::PBlock(){
+void Block::PBlock(){  // Output for Available
 	cout << "Start Address = " << setw(8) << startA << " Size = " << setw(8) <<size << endl;
 }
-void Block::PBlockU(){
+void Block::PBlockU(){ // output for In_use
 	cout << "Start Address: " << setw(8) << startA << " Size = " << size << " Process ID =  " << PID << " Block ID = " << BID << endl;
 }
